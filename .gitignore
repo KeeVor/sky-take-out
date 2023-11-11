@@ -2,5 +2,5 @@
 .idea
 *.iml
 *.class
-*Test.java
+*com.sky.SkyApplicationTest.java
 **/test/
