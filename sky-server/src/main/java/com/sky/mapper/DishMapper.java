@@ -9,6 +9,8 @@ import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface DishMapper {
 
@@ -33,6 +35,12 @@ public interface DishMapper {
      */
     @Select("select d.*,c.`name` as category_name from dish d left outer join category c on d.category_id = c.id" +
             " where d.id = #{id}")
-    DishVO queryById(int id);
+    DishVO queryById(Long id);
 
+
+    /**
+     * 根据菜品id批量删除
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }
