@@ -78,4 +78,30 @@ public class DishController {
         return Result.success();
     }
 
+    /**
+     * 修改菜品
+     * @param dishVO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("修改菜品")
+    public Result update(@RequestBody DishVO dishVO){
+        log.info("修改菜品：{}",dishVO);
+        dishService.update(dishVO);
+        return Result.success();
+
+    }
+
+    /**
+     * 菜品起售禁售
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("菜品起售禁售")
+    public Result updateStatus(@PathVariable Integer status,Long id){
+        dishService.status(status,id);
+        return Result.success();
+    }
 }

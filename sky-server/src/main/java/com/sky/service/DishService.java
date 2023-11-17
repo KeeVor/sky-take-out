@@ -35,4 +35,17 @@ public interface DishService {
      * @param ids
      */
     void removeByIds(List<Long> ids);
+
+    /**
+     * 修改菜品数据
+     * @param dishVO
+     */
+    void update(DishVO dishVO);
+
+    /**
+     * 菜品起售禁售
+     * @param status
+     * @param id
+     */
+    void status(Integer status, Long id);
 }

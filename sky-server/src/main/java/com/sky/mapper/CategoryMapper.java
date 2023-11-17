@@ -52,4 +52,5 @@ public interface CategoryMapper {
      */
     @Select("select * from category where type = #{type}")
     List<Category> queryListByType(int type);
+
 }

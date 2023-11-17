@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -112,13 +113,13 @@ public class DishServiceImpl implements DishService {
         //首先查询是否为起售状态，此状态下不能删除。
         for (Long id : ids) {
             DishVO dishVO = dishMapper.queryById(id);
-            if (Objects.equals(dishVO.getStatus(), StatusConstant.ENABLE)){
+            if (Objects.equals(dishVO.getStatus(), StatusConstant.ENABLE)) {
                 //起售状态，不能删除。
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
             //查询有没有套餐与此菜品关联，如果有，则不能删除菜品。
             SetmealDish setmealDish = setmealDishMapper.queryByDishId(id);
-            if (setmealDish != null){
+            if (setmealDish != null) {
                 //存在相关联的套餐，不能删除。
                 throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
             }
@@ -128,5 +129,44 @@ public class DishServiceImpl implements DishService {
         //删除菜品口味。
         dishFlavorMapper.deleteByDishIds(ids);
 
+    }
+
+    /**
+     * 修改菜品数据
+     *
+     * @param dishVO
+     */
+    public void update(DishVO dishVO) {
+        //创建数据库对应的实体类
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishVO, dish);
+        //修改菜品信息
+        dishMapper.updateById(dish);
+        //删除口味口味信息
+        Long dishId = dish.getId();
+        //这里直接调用批量删除菜品口味的mapper方法
+        dishFlavorMapper.deleteByDishIds(Collections.singletonList(dishId));
+        //保存菜品口味数据
+        List<DishFlavor> flavors = dishVO.getFlavors();
+        if (flavors != null && !flavors.isEmpty()) {
+            //给菜品口味添加菜品id
+            flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishId));
+            //批量保存口味
+            dishFlavorMapper.insertBatch(flavors);
+        }
+    }
+
+    /**
+     * 菜品起售禁售
+     *
+     * @param status
+     * @param id
+     */
+    public void status(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.updateById(dish);
     }
 }
