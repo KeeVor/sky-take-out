@@ -43,10 +43,18 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+
+    # 配置移动端令牌
+    user-secret-key: userjwt
+    user-ttl: 7200000
+    user-token-name: authentication
+  #配置阿里云oss储存服务
   alioss:
     endpoint: ${sky.alioss.endpoint}
     access-key-id: ${sky.alioss.access-key-id}
     access-key-secret: ${sky.alioss.access-key-secret}
     bucket-name: ${sky.alioss.bucket-name}
-
-
+  # 配置微信小程序服务
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}

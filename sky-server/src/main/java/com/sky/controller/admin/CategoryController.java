@@ -99,7 +99,7 @@ public class CategoryController {
     @ApiOperation("根据类型查询分类")
     public Result<List<Category>> list(int type){
         log.info("根据类型查询分类：{}",type);
-        List<Category> list = categoryService.queryListByType(type);
+        List<Category> list = categoryService.list(type);
         return Result.success(list);
     }
 }

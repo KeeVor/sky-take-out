@@ -18,3 +18,7 @@ sky:
     redis:
       host: 192.168.92.100
       port: 6379
+# 配置微信小程序
+  wechat:
+    appid:  wx61124af820e4bf6b
+    secret: c5af15287303f16c16867d1952853d18
