@@ -124,7 +124,7 @@ public class DishController {
      */
     @GetMapping("/list")
     @ApiOperation("根据分类id查询菜品")
-    public Result<List<Dish>> list(@RequestParam("id") Long categoryId){
+    public Result<List<Dish>> list(@RequestParam("categoryId") Long categoryId){
         log.info("根据分类id查询菜品：{}",categoryId);
         List<Dish> list = dishService.list(categoryId);
         return Result.success(list);
@@ -138,6 +138,8 @@ public class DishController {
         Set keys = redisTemplate.keys(pattern);
         redisTemplate.delete(keys);
     }
+
+
 
 
 }
