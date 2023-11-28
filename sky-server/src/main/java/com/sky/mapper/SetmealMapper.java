@@ -45,5 +45,26 @@ public interface SetmealMapper {
      * @param setmeal
      * @return
      */
-    Page<Setmeal> pageQuery(Setmeal setmeal);
+    Page<SetmealVO> pageQuery(Setmeal setmeal);
+
+    /**
+     * 套餐信息修改
+     * @param setmeal
+     */
+    @AutoFill(OperationType.UPDATE)
+    void updateById(Setmeal setmeal);
+
+    /**
+     * 根据套餐id查询套餐信息
+     * @param id
+     * @return
+     */
+    @Select("select * from setmeal where id = #{id}")
+    Setmeal getById(Long id);
+
+    /**
+     * 批量删除套餐信息
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }

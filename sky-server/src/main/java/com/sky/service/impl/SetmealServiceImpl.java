@@ -92,10 +92,68 @@ public class SetmealServiceImpl implements SetmealService {
                 .name(setmealPageQueryDTO.getName())
                 .status(setmealPageQueryDTO.getStatus())
                 .build();
-        Page<Setmeal> page = setmealMapper.pageQuery(setmeal);
+        Page<SetmealVO> page = setmealMapper.pageQuery(setmeal);
         PageResult pageResult = new PageResult();
         pageResult.setRecords(page.getResult());
         pageResult.setTotal(page.getTotal());
         return pageResult;
+    }
+
+    /**
+     * 修改套餐
+     * @param setmealDTO
+     */
+    public void update(SetmealDTO setmealDTO) {
+        //修改setmeal数据
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO,setmeal);
+        setmealMapper.updateById(setmeal);
+        //删除setmealDish数据
+        setmealDishMapper.deleteBySetmealId(setmeal.getId());
+        //添加setmealDish数据
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        setmealDishes.forEach(setmealDish -> setmealDish.setSetmealId(setmealDTO.getId()));
+        setmealDishMapper.insertBatch(setmealDishes);
+    }
+
+    /**
+     * 根据id获取套餐信息
+     * @param id
+     * @return
+     */
+    public SetmealVO queryById(Long id) {
+        //获取套餐信息
+        Setmeal setmeal = setmealMapper.getById(id);
+        //获取套餐中的菜品信息
+        List<SetmealDish> setmealDishes = setmealDishMapper.queryBySetmealId(id);
+        //封装
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal,setmealVO);
+        setmealVO.setSetmealDishes(setmealDishes);
+        //返回
+        return setmealVO;
+    }
+
+    /**
+     * 套餐起售停售
+     * @param status
+     */
+    public void updateStatus(Integer status,Long id) {
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.updateById(setmeal);
+    }
+
+    /**
+     * 批量删除套餐信息
+     * @param ids
+     */
+    public void deleteByIds(List<Long> ids) {
+        //批量删除套餐信息
+        setmealMapper.deleteByIds(ids);
+        //批量删除套餐菜品关联信息
+        setmealDishMapper.deleteBySetmealIds(ids);
     }
 }

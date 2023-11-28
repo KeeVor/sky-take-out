@@ -37,4 +37,30 @@ public interface SetmealService {
      * @return
      */
     PageResult pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+
+    /**
+     * 修改套餐
+     * @param setmealDTO
+     */
+    void update(SetmealDTO setmealDTO);
+
+    /**
+     * 根据id获取套餐信息
+     * @param id
+     * @return
+     */
+    SetmealVO queryById(Long id);
+
+    /**
+     * 套餐起售停售
+     * @param status
+     */
+    void updateStatus(Integer status,Long id);
+
+    /**
+     * 批量删除套餐信息
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }
