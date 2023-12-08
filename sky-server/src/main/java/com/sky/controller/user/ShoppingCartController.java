@@ -69,6 +69,7 @@ public class ShoppingCartController {
     public Result clean(){
         log.info("清空购物车");
         shoppingCartService.clean();
+        //冒泡排序
         return Result.success();
     }
 }
