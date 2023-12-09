@@ -5,9 +5,12 @@ import com.github.pagehelper.Page;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
+import com.sky.vo.TurnoverReportVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -56,4 +59,12 @@ public interface OrderMapper {
      */
     @Select("select * from orders where status = #{status}")
     List<Orders> queryByStatus(Integer status);
+
+    /**
+     * 根据订单日期查询已完成订单的销售额总和
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<TurnoverReportVO> queryAmountByOrderTime(LocalDate beginDate, LocalDate endDate);
 }

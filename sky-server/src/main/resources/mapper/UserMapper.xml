@@ -6,4 +6,15 @@
         insert into user(openid, name, phone, sex, id_number, avatar, create_time)
         values (#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{createTime})
     </insert>
+    <select id="queryTotalUserByCreateTimeBefore" resultType="java.lang.Integer">
+        select count(*)  from user
+        where create_time &lt; #{createTime}
+    </select>
+    <select id="queryTotalUserByCreateTime" resultType="java.lang.Integer">
+        select total from(
+                             select count(*) as total,date(create_time) as time
+                             from user group by date(create_time)
+                         ) as d
+        where time = #{createTime}
+    </select>
 </mapper>

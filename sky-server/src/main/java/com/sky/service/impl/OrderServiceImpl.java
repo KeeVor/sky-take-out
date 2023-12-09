@@ -11,6 +11,7 @@ import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.AddressBookMapper;
 import com.sky.mapper.OrderDetailMapper;
@@ -218,6 +219,9 @@ public class OrderServiceImpl implements OrderService {
      */
     public void reminder(Long id) {
         Orders orders = orderMapper.queryById(id);
+        if (orders == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
         Map map = new HashMap();
         map.put("type",2);// 1表示来单提醒 2表示客户催单
         map.put("orderId",id);

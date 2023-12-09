@@ -48,4 +48,9 @@
             <if test="endTime != null">and order_time &lt; #{endTime}</if>
         </where>
     </select>
+    <select id="queryAmountByOrderTime" resultType="com.sky.vo.TurnoverReportVO"><![CDATA[
+        SELECT date(order_time) as date_list,sum(amount) as turnover_list
+        FROM orders where status = 5 and order_time >= #{beginDate} and order_time <= #{endDate}
+                    group by date(order_time)
+    ]]></select>
 </mapper>
