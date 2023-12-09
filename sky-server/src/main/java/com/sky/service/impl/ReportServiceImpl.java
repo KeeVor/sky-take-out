@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -112,5 +113,59 @@ public class ReportServiceImpl implements ReportService {
                 .newUserList(StringUtil.join(",",newUserList))
                 .totalUserList(StringUtil.join(",",totalUserList))
                 .build();
+    }
+
+    /**
+     * 订单统计接口
+     * @param begin
+     * @param end
+     * @return
+     */
+    public OrderReportVO ordersStatistics(LocalDate begin, LocalDate end) {
+        //先查询这个时间段内有订单的数据
+        List<OrderReportVO> orderReportVOS = orderMapper.queryTotalOrdersByCreate(begin,end);
+        //创建时间集合
+        Map<String, OrderReportVO> map = new LinkedHashMap<>();
+        map.put(begin.toString(),OrderReportVO.builder().validOrderCount(0).totalOrderCount(0).build());
+        while (!begin.isEqual(end)){
+            begin = begin.plusDays(1);
+            map.put(begin.toString(),OrderReportVO.builder().validOrderCount(0).totalOrderCount(0).build());
+        }
+        //把有订单的数据存入集合里
+        for (OrderReportVO orderReportVO : orderReportVOS) {
+            map.put(orderReportVO.getDateList(),OrderReportVO.builder()
+                    .orderCountList(orderReportVO.getOrderCountList())
+                    .validOrderCountList(orderReportVO.getValidOrderCountList()).build()
+            );
+        }
+        //封装数据
+        Integer totalOrderCount = 0; //订单总数
+        Integer validOrderCount = 0; //有效订单总数
+        StringBuilder dateList = new StringBuilder(); //日期
+        StringBuilder orderCountList = new StringBuilder(); //每日订单数
+        StringBuilder validOrderCountList = new StringBuilder(); //每日有效订单数
+        for (Map.Entry<String, OrderReportVO> entry : map.entrySet()) {
+            dateList.append(entry.getKey()).append(",");
+            if(entry.getValue().getOrderCountList() != null){
+                totalOrderCount += Integer.parseInt(entry.getValue().getOrderCountList());
+                orderCountList.append(entry.getValue().getOrderCountList()).append(",");
+            }else {
+                orderCountList.append("0").append(",");
+            }
+            if (entry.getValue().getValidOrderCountList() != null){
+                validOrderCount += Integer.parseInt(entry.getValue().getValidOrderCountList());
+                validOrderCountList.append(entry.getValue().getValidOrderCountList()).append(",");
+            }else {
+                validOrderCountList.append("0").append(",");
+            }
+        }
+
+        return OrderReportVO.builder()
+                .dateList(dateList.toString())
+                .orderCountList(orderCountList.toString())
+                .validOrderCountList(validOrderCountList.toString())
+                .totalOrderCount(totalOrderCount)
+                .validOrderCount(validOrderCount)
+                .orderCompletionRate(validOrderCount * 1.0 / totalOrderCount).build();
     }
 }

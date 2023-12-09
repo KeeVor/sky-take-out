@@ -53,4 +53,17 @@
         FROM orders where status = 5 and order_time >= #{beginDate} and order_time <= #{endDate}
                     group by date(order_time)
     ]]></select>
+    <select id="queryTotalOrdersByCreate" resultType="com.sky.vo.OrderReportVO"><![CDATA[
+        SELECT
+            date(order_time) as date_list,
+            SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) AS valid_order_count_list,
+            count(*) AS order_count_list
+        FROM
+            orders
+        WHERE
+            date(order_time) BETWEEN #{begin} AND #{end}
+        GROUP BY
+            date(order_time)
+    ]]>
+    </select>
 </mapper>

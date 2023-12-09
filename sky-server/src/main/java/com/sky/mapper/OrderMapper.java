@@ -4,6 +4,7 @@ package com.sky.mapper;
 import com.github.pagehelper.Page;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.OrderVO;
 import com.sky.vo.TurnoverReportVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -67,4 +68,12 @@ public interface OrderMapper {
      * @return
      */
     List<TurnoverReportVO> queryAmountByOrderTime(LocalDate beginDate, LocalDate endDate);
+
+    /**
+     * 根据订单日期查询有效订单总数和订单总数
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<OrderReportVO> queryTotalOrdersByCreate(LocalDate begin, LocalDate end);
 }
