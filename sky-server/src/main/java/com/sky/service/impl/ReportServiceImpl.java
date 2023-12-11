@@ -1,15 +1,19 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
+import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +30,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
 
     /**
      * 营业额统计接口
@@ -76,6 +83,7 @@ public class ReportServiceImpl implements ReportService {
 
     /**
      * 用户统计接口
+     *
      * @param begin
      * @param end
      * @return
@@ -84,7 +92,7 @@ public class ReportServiceImpl implements ReportService {
         //生成日期列表
         List<LocalDate> dateList = new ArrayList<>();
         dateList.add(begin);
-        while (!begin.isEqual(end)){
+        while (!begin.isEqual(end)) {
             begin = begin.plusDays(1);
             dateList.add(begin);
         }
@@ -109,31 +117,32 @@ public class ReportServiceImpl implements ReportService {
 
         //封装结果
         return UserReportVO.builder()
-                .dateList(StringUtil.join(",", dateList))
-                .newUserList(StringUtil.join(",",newUserList))
-                .totalUserList(StringUtil.join(",",totalUserList))
+                .dateList(StringUtil.join(",", dateList).substring(1, StringUtil.join(",", dateList).length() - 1))
+                .newUserList(StringUtil.join(",", newUserList).substring(1, StringUtil.join(",", newUserList).length() - 1))
+                .totalUserList(StringUtil.join(",", totalUserList).substring(1, StringUtil.join(",", totalUserList).length() - 1))
                 .build();
     }
 
     /**
      * 订单统计接口
+     *
      * @param begin
      * @param end
      * @return
      */
     public OrderReportVO ordersStatistics(LocalDate begin, LocalDate end) {
         //先查询这个时间段内有订单的数据
-        List<OrderReportVO> orderReportVOS = orderMapper.queryTotalOrdersByCreate(begin,end);
+        List<OrderReportVO> orderReportVOS = orderMapper.queryTotalOrdersByCreate(begin, end);
         //创建时间集合
         Map<String, OrderReportVO> map = new LinkedHashMap<>();
-        map.put(begin.toString(),OrderReportVO.builder().validOrderCount(0).totalOrderCount(0).build());
-        while (!begin.isEqual(end)){
+        map.put(begin.toString(), OrderReportVO.builder().validOrderCount(0).totalOrderCount(0).build());
+        while (!begin.isEqual(end)) {
             begin = begin.plusDays(1);
-            map.put(begin.toString(),OrderReportVO.builder().validOrderCount(0).totalOrderCount(0).build());
+            map.put(begin.toString(), OrderReportVO.builder().validOrderCount(0).totalOrderCount(0).build());
         }
         //把有订单的数据存入集合里
         for (OrderReportVO orderReportVO : orderReportVOS) {
-            map.put(orderReportVO.getDateList(),OrderReportVO.builder()
+            map.put(orderReportVO.getDateList(), OrderReportVO.builder()
                     .orderCountList(orderReportVO.getOrderCountList())
                     .validOrderCountList(orderReportVO.getValidOrderCountList()).build()
             );
@@ -146,16 +155,16 @@ public class ReportServiceImpl implements ReportService {
         StringBuilder validOrderCountList = new StringBuilder(); //每日有效订单数
         for (Map.Entry<String, OrderReportVO> entry : map.entrySet()) {
             dateList.append(entry.getKey()).append(",");
-            if(entry.getValue().getOrderCountList() != null){
+            if (entry.getValue().getOrderCountList() != null) {
                 totalOrderCount += Integer.parseInt(entry.getValue().getOrderCountList());
                 orderCountList.append(entry.getValue().getOrderCountList()).append(",");
-            }else {
+            } else {
                 orderCountList.append("0").append(",");
             }
-            if (entry.getValue().getValidOrderCountList() != null){
+            if (entry.getValue().getValidOrderCountList() != null) {
                 validOrderCount += Integer.parseInt(entry.getValue().getValidOrderCountList());
                 validOrderCountList.append(entry.getValue().getValidOrderCountList()).append(",");
-            }else {
+            } else {
                 validOrderCountList.append("0").append(",");
             }
         }
@@ -167,5 +176,29 @@ public class ReportServiceImpl implements ReportService {
                 .totalOrderCount(totalOrderCount)
                 .validOrderCount(validOrderCount)
                 .orderCompletionRate(validOrderCount * 1.0 / totalOrderCount).build();
+    }
+
+    /**
+     * 查询销量排行top10
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
+    public SalesTop10ReportVO selectTop10(LocalDate begin, LocalDate end) {
+        //查询排行前十名菜品或者套餐
+        List<GoodsSalesDTO> list = orderDetailMapper.queryTop10(begin, end.plusDays(1));
+        //封装数据
+        StringBuilder nameList = new StringBuilder();
+        StringBuilder numberList = new StringBuilder();
+        for (GoodsSalesDTO vo : list) {
+            nameList.append(vo.getName()).append(",");
+            numberList.append(vo.getNumber()).append(",");
+        }
+
+        return SalesTop10ReportVO.builder()
+                .nameList(nameList.toString())
+                .numberList(numberList.toString()).build();
+
     }
 }
