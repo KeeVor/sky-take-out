@@ -11,7 +11,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -76,4 +75,18 @@ public interface OrderMapper {
      * @return
      */
     List<OrderReportVO> queryTotalOrdersByCreate(LocalDate begin, LocalDate end);
+
+    /**
+     * 根据订单时间查询消费用户总人数
+     * @param now
+     * @return
+     */
+    Integer queryTotalUserByOrderTime(LocalDate now);
+
+    /**
+     * 根据订单时间和状态查订单数量
+     * @param status
+     * @return
+     */
+    Integer queryOrderTotalByStatusAndOrderTime(Integer status, LocalDate order_time);
 }

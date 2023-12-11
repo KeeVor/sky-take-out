@@ -14,4 +14,10 @@
         order by sum(number) desc
         LIMIT 0,10;
     </select>
+    <select id="queryTotalAmount" resultType="java.lang.Double">
+        select sum(number * amount) from order_detail
+        where order_id in (
+            select id from orders
+            where status = 5 and date(order_time) = #{now})
+    </select>
 </mapper>

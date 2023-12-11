@@ -31,7 +31,7 @@ public interface UserMapper {
     Integer queryTotalUserByCreateTimeBefore(LocalDate createTime);
 
     /**
-     * 根据时间查询当天用户总量
+     * 根据时间查询当天新增用户总量
      * @param createTime
      * @return
      */

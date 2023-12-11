@@ -32,4 +32,11 @@ public interface OrderDetailMapper {
      * @return
      */
     List<GoodsSalesDTO> queryTop10(LocalDate begin, LocalDate end);
+
+    /**
+     * 查询某日销售总额
+     * @param now
+     * @return
+     */
+    Double queryTotalAmount(LocalDate now);
 }

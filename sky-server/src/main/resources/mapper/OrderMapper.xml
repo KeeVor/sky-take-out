@@ -66,4 +66,18 @@
             date(order_time)
     ]]>
     </select>
+    <select id="queryTotalUserByOrderTime" resultType="java.lang.Integer">
+        select count(*) from (
+             select user_id from orders
+             where status = 5 and date(order_time) = #{now}
+             group by user_id) as c
+
+    </select>
+    <select id="queryOrderTotalByStatusAndOrderTime" resultType="java.lang.Integer">
+        select count(*) from orders
+            <where>
+                <if test="status != null">and status = #{status}</if>
+                <if test="order_time != null">and date(order_time) = #{order_time}</if>
+            </where>
+    </select>
 </mapper>
