@@ -14,6 +14,7 @@ import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -200,5 +201,12 @@ public class ReportServiceImpl implements ReportService {
                 .nameList(nameList.toString())
                 .numberList(numberList.toString()).build();
 
+    }
+
+    /**
+     * 导出Excel报表
+     * @param response
+     */
+    public void exportData(HttpServletResponse response) {
     }
 }

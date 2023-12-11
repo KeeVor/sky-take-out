@@ -67,4 +67,13 @@ public interface SetmealMapper {
      * @param ids
      */
     void deleteByIds(List<Long> ids);
+
+    /**
+     * 根据状态查询数量
+     * @param status
+     * @return
+     */
+    @Select("select count(*) from setmeal where status = #{status}")
+    Integer queryTotalByStatus(int status);
 }
+

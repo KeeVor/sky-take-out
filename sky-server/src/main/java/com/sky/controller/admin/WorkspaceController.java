@@ -4,7 +4,9 @@ package com.sky.controller.admin;
 import com.sky.result.Result;
 import com.sky.service.WorkspaceService;
 import com.sky.vo.BusinessDataVO;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
+import com.sky.vo.SetmealOverViewVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +43,32 @@ public class WorkspaceController {
     @GetMapping("/overviewOrders")
     @ApiOperation("查询订单管理数据")
     public Result<OrderOverViewVO> overviewOrders(){
-        OrderOverViewVO orderOverViewVO = workspaceService.getoverviewOrders();
+        OrderOverViewVO orderOverViewVO = workspaceService.getOverviewOrders();
         log.info("查询订单管理数据:{}",orderOverViewVO);
         return Result.success(orderOverViewVO);
+    }
+
+    /**
+     * 查询菜品总览
+     * @return
+     */
+    @GetMapping("/overviewDishes")
+    @ApiOperation("查询菜品总览")
+    public Result<DishOverViewVO> overviewDishes(){
+        DishOverViewVO dishOverViewVO = workspaceService.getOverviewDishes();
+        log.info("查询菜品总览:{}",dishOverViewVO);
+        return Result.success(dishOverViewVO);
+    }
+
+    /**
+     * 查询套餐总览
+     * @return
+     */
+    @GetMapping("/overviewSetmeals")
+    @ApiOperation("查询套餐总览")
+    public Result<SetmealOverViewVO> overviewSetmeals(){
+        SetmealOverViewVO setmealOverViewVO = workspaceService.getOverviewSetmeals();
+        log.info("查询套餐总览:{}",setmealOverViewVO);
+        return Result.success(setmealOverViewVO);
     }
 }
